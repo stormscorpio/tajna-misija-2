@@ -1,1 +1,587 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zaupna misija</title>
 
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#111;
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:20px;
+    overflow-x:hidden;
+}
+
+.container{
+    max-width:700px;
+    width:100%;
+}
+
+.hidden{
+    display:none;
+}
+
+h1{
+    color:#ffd54f;
+}
+
+h2{
+    line-height:1.4;
+}
+
+.question{
+    margin:25px 0;
+    text-align:left;
+}
+
+button{
+    background:#2b84ff;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:14px 24px;
+    margin:10px;
+    cursor:pointer;
+    font-size:1rem;
+}
+
+button:hover{
+    background:#0f6be6;
+}
+
+input[type=text]{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    width:280px;
+    max-width:100%;
+    font-size:1rem;
+}
+
+#noBtn{
+    background:#666;
+    transition:left .15s ease, top .15s ease;
+}
+
+#result{
+    margin-top:30px;
+}
+
+.success{
+    animation:fadeIn 1.5s ease;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+#confetti{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+}
+
+.subtitle{
+    opacity:.85;
+    margin-bottom:25px;
+}
+
+</style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="container">
+
+    <!-- STEP 1 -->
+
+    <div id="step1">
+
+        <h1>🔒 Dobrodošla, agentka</h1>
+
+        <p>
+            Če bereš to sporočilo, si bila izbrana za posebno nalogo.
+        </p>
+
+        <p>
+            Zaradi pomembnosti misije ne moremo razkriti vseh informacij takoj.
+        </p>
+
+        <p>
+            Najprej moramo preveriti, ali si prava oseba.
+        </p>
+
+        <br>
+
+        <button onclick="nextStep(1,2)">
+            SPREJMI MISIJO
+        </button>
+
+    </div>
+
+    <!-- STEP 2 -->
+
+    <div id="step2" class="hidden">
+
+        <h1>🗝️ Preizkus zaupanja</h1>
+
+        <div class="question">
+
+            <p><b>1. Kaj narediš, če te prijatelj prosi za pomoč?</b></p>
+
+            <label>
+                <input type="radio" name="q1">
+                Ignoriram ga.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q1" data-correct>
+                Pomagam, če lahko.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q1">
+                Pobegnem.
+            </label>
+
+        </div>
+
+        <div class="question">
+
+            <p><b>2. Koliko skrivnosti znaš obdržati?</b></p>
+
+            <label>
+                <input type="radio" name="q2">
+                Nobene.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q2">
+                Nekaj.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q2" data-correct>
+                Vse, kar mi je zaupano.
+            </label>
+
+        </div>
+
+        <div class="question">
+
+            <p><b>3. Kako dobro skrbiš za ljudi, ki jih imaš rada?</b></p>
+
+            <label>
+                <input type="radio" name="q3">
+                Slabo.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q3">
+                Povprečno.
+            </label>
+            <br>
+
+            <label>
+                <input type="radio" name="q3" data-correct>
+                Z vsem srcem.
+            </label>
+
+        </div>
+
+        <button onclick="checkQuiz()">
+            PREVERI ODGOVORE
+        </button>
+
+    </div>
+
+    <!-- STEP 3 -->
+
+    <div id="step3" class="hidden">
+
+        <h1>📂 Skrivni arhiv</h1>
+
+        <p>
+            V arhivu se skriva ključ za nadaljevanje.
+        </p>
+
+        <p>
+            Kaj postane večje, ko ga deliš z drugimi?
+        </p>
+
+        <button onclick="unlockRiddle(true)">
+            Ljubezen
+        </button>
+
+        <button onclick="unlockRiddle(false)">
+            Pica
+        </button>
+
+        <button onclick="unlockRiddle(false)">
+            Denarnica
+        </button>
+
+    </div>
+
+    <!-- STEP 4 -->
+
+    <div id="step4" class="hidden">
+
+        <h1>🔐 Zadnji sef</h1>
+
+        <p>
+            Za odklep vnesi geslo.
+        </p>
+
+        <p>
+            Namig: Lastnost, brez katere nobena družina ne more uspeti.
+        </p>
+
+        <input
+            type="text"
+            id="password"
+            placeholder="Vnesi geslo">
+
+        <br><br>
+
+        <button onclick="checkPassword()">
+            ODKLENI
+        </button>
+
+    </div>
+
+    <!-- STEP 5 -->
+
+    <div id="step5" class="hidden">
+
+        <h1>✨ Dostop odobren</h1>
+
+        <p>
+            Iskali smo nekoga posebnega.
+        </p>
+
+        <p>
+            Nekoga, ki mu brezpogojno zaupamo.
+        </p>
+
+        <p>
+            Nekoga, ki bo vedno pomemben del najine družine.
+        </p>
+
+        <br>
+
+        <button onclick="nextStep(5,6)">
+            ODPRI VPRAŠANJE
+        </button>
+
+    </div>
+
+    <!-- STEP 6 -->
+
+    <div id="step6" class="hidden">
+
+        <h1>❤️ Zelo pomembno vprašanje ❤️</h1>
+
+        <h2>
+            Bi postala botra najinemu otroku?
+        </h2>
+
+        <br>
+
+        <button onclick="celebrate()">
+            DA ❤️
+        </button>
+
+        <button onclick="celebrate()">
+            ABSOLUTNO DA ❤️
+        </button>
+
+        <button id="noBtn">
+            NE 😅
+        </button>
+
+        <div id="result"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+function nextStep(from,to){
+
+    document
+        .getElementById("step"+from)
+        .classList.add("hidden");
+
+    document
+        .getElementById("step"+to)
+        .classList.remove("hidden");
+
+}
+
+function checkQuiz(){
+
+    const correct =
+        document.querySelector('[name="q1"][data-correct]').checked &&
+        document.querySelector('[name="q2"][data-correct]').checked &&
+        document.querySelector('[name="q3"][data-correct]').checked;
+
+    if(correct){
+        nextStep(2,3);
+    }else{
+        alert("Poskusi znova 😊");
+    }
+}
+
+function unlockRiddle(correct){
+
+    if(correct){
+        nextStep(3,4);
+    }else{
+        alert("To ni pravi odgovor 😄");
+    }
+}
+
+function checkPassword(){
+
+    const value =
+        document
+        .getElementById("password")
+        .value
+        .trim()
+        .toLowerCase();
+
+    if(value === "ljubezen"){
+        nextStep(4,5);
+    }else{
+        alert("Napačno geslo.");
+    }
+}
+
+/* ---- izmikajoči NE ---- */
+
+const noMessages = [
+    "Lep poskus 😎",
+    "Ne bo šlo 😆",
+    "Skoraj 😁",
+    "Poskusi DA ❤️",
+    "Ta možnost ne dela 😂",
+    "Napačen gumb 😇"
+];
+
+let noIndex = 0;
+
+function moveNoButton(){
+
+    const btn =
+        document.getElementById("noBtn");
+
+    const maxX =
+        window.innerWidth -
+        btn.offsetWidth -
+        20;
+
+    const maxY =
+        window.innerHeight -
+        btn.offsetHeight -
+        20;
+
+    btn.style.position = "fixed";
+
+    btn.style.left =
+        Math.random() * maxX + "px";
+
+    btn.style.top =
+        Math.random() * maxY + "px";
+
+    btn.textContent =
+        noMessages[
+            noIndex++ %
+            noMessages.length
+        ];
+}
+
+setTimeout(() => {
+
+    const btn =
+        document.getElementById("noBtn");
+
+    btn.addEventListener(
+        "mouseenter",
+        moveNoButton
+    );
+
+    btn.addEventListener(
+        "touchstart",
+        function(e){
+            e.preventDefault();
+            moveNoButton();
+        }
+    );
+
+},100);
+
+/* ---- finale ---- */
+
+function celebrate(){
+
+    const result =
+        document.getElementById("result");
+
+    result.innerHTML =
+        "<p>⏳ Preverjanje odgovora ...</p>";
+
+    setTimeout(() => {
+
+        result.innerHTML =
+            "<p>✅ Potrjevanje kandidatke ...</p>";
+
+    },1200);
+
+    setTimeout(() => {
+
+        result.innerHTML =
+            "<p>🔐 Posodabljanje statusa ...</p>";
+
+    },2400);
+
+    setTimeout(() => {
+
+        result.innerHTML = `
+            <div class="success">
+                <h1>🎉 ČESTITKE 🎉</h1>
+                <h2>Uradno si postala</h2>
+                <h1>❤️ BOTRA ❤️</h1>
+
+                <p>
+                    Komaj čakamo, da to
+                    pustolovščino doživimo skupaj.
+                </p>
+
+                <p style="opacity:.8;">
+                    P.S.: Zdaj veš,
+                    zakaj je bila ta misija
+                    tako pomembna. 🥰
+                </p>
+            </div>
+        `;
+
+        startConfetti();
+
+    },3600);
+}
+
+/* ---- konfeti ---- */
+
+function startConfetti(){
+
+    const canvas =
+        document.getElementById("confetti");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    canvas.width =
+        window.innerWidth;
+
+    canvas.height =
+        window.innerHeight;
+
+    const pieces = [];
+
+    for(let i=0;i<250;i++){
+
+        pieces.push({
+            x:Math.random()*canvas.width,
+            y:-Math.random()*canvas.height,
+            radius:Math.random()*5+3,
+            speed:Math.random()*4+2,
+            color:`hsl(${Math.random()*360},100%,50%)`
+        });
+
+    }
+
+    const duration = 5000;
+    const start = Date.now();
+
+    function animate(){
+
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        pieces.forEach(p => {
+
+            const ground =
+                canvas.height - 10;
+
+            if(p.y < ground){
+                p.y += p.speed;
+            }else{
+                p.y = ground;
+            }
+
+            ctx.beginPath();
+            ctx.fillStyle = p.color;
+
+            ctx.arc(
+                p.x,
+                p.y,
+                p.radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+        });
+
+        if(Date.now() - start < duration){
+
+            requestAnimationFrame(
+                animate
+            );
+
+        }
+    }
+
+    animate();
+}
+
+</script>
+
+</body>
+</html>
